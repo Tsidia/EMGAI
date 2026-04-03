@@ -47,31 +47,6 @@ Lekarz może:
 
 <img width="946" height="422" alt="opis1" src="https://github.com/user-attachments/assets/d1d931d9-640a-4d22-b506-a74c9a5f126c" />
 
-## Uruchomienie
-
-Wymagania: Python 3.10+ i klucz API (Zhipu AI, OpenAI, lub inny kompatybilny dostawca).
-
-```bash
-pip install -r requirements.txt
-cp .env.example .env       # skopiuj szablon konfiguracji
-                            # wpisz swój klucz API w pliku .env
-python run.py              # uruchom serwer
-```
-
-Aplikacja będzie dostępna pod adresem **http://localhost:8000**
-
-## Konfiguracja AI
-
-System współpracuje z dowolnym dostawcą API kompatybilnym z OpenAI. W pliku `.env` wystarczy ustawić trzy zmienne:
-
-```env
-LLM_API_KEY=twoj-klucz-api
-LLM_BASE_URL=https://open.bigmodel.cn/api/paas/v4/
-LLM_MODEL=glm-5
-```
-
-Obsługiwani dostawcy: Zhipu AI (GLM-5), OpenAI (GPT-4o), oraz lokalne modele (Ollama, LM Studio).
-
 ## Normy referencyjne
 
 Zaimplementowane wartości referencyjne dla badania przewodzenia nerwowego:
