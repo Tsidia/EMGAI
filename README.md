@@ -18,13 +18,16 @@ The form covers a full electrophysiology study:
 - **Needle EMG:** 17 muscles with a full parameter set: insertional activity, fibrillations, positive sharp waves, fasciculations, motor unit potentials (duration, amplitude, polyphasia), recruitment.
 - **Patient data:** age, sex, height, clinical indication, referring physician.
 
-<img width="959" height="432" alt="mainPage" src="https://github.com/user-attachments/assets/9668ead8-1ba9-40e4-a6fa-ae6196d686de" />
+<img width="1902" height="620" alt="image" src="https://github.com/user-attachments/assets/a84d952c-ca21-4814-8fec-3ff1afb8def2" />
+
+<img width="1907" height="877" alt="image" src="https://github.com/user-attachments/assets/9d8ad397-37d6-4ca2-9e49-35f959889919" />
 
 ### 2. Automatic validation against norms
 
 Every measured parameter is compared against published reference values (Preston & Shapiro, Kimura) and **abnormalities are flagged immediately**, shown as red markers next to each nerve and muscle.
 
-<img width="947" height="439" alt="pre-opis" src="https://github.com/user-attachments/assets/bacfd6ef-eb87-4758-b837-0b0928c7cead" />
+<img width="1525" height="873" alt="image" src="https://github.com/user-attachments/assets/3ed023bb-4a08-4c42-bef5-8e6fb8c18215" />
+
 
 ### 3. AI report generation
 
@@ -35,7 +38,9 @@ A single click sends the study data, with flagged abnormalities, to an LLM that 
 - Summary and clinical interpretation
 - Diagnostic suggestion in the context of the clinical indication
 
-<img width="952" height="430" alt="opis3" src="https://github.com/user-attachments/assets/6bc67da7-50a8-4d78-bdd2-58bd9d6ffa5b" />
+<img width="1506" height="852" alt="image" src="https://github.com/user-attachments/assets/0fffa065-2e7a-4794-a61d-cc7bf4c395ae" />
+
+<img width="1513" height="818" alt="image" src="https://github.com/user-attachments/assets/13bbb6a9-5344-4443-bc08-98c76bfc053e" />
 
 ### 4. Review, edit, sign off
 
@@ -44,8 +49,6 @@ The physician can:
 - Freely edit it
 - Approve it with their name (timestamped)
 - Regenerate if needed
-
-<img width="946" height="422" alt="opis1" src="https://github.com/user-attachments/assets/d1d931d9-640a-4d22-b506-a74c9a5f126c" />
 
 ## Reference norms
 
