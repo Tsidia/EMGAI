@@ -93,7 +93,7 @@ def update_report(exam_id: str, data: ReportUpdate, db: Session = Depends(get_db
 def approve_report(
     exam_id: str, data: ReportApprove, db: Session = Depends(get_db)
 ):
-    """Approve the report — locks it for further editing."""
+    """Approve the report (locks it for further editing)."""
     report = (
         db.query(Report).filter(Report.examination_id == exam_id).first()
     )

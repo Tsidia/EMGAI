@@ -15,17 +15,17 @@ from backend.norms import validate_needle_emg, validate_nerve_study
 SYSTEM_PROMPT = """\
 You are a clinical neurophysiology assistant helping physicians write \
 EMG/ENG examination reports. You produce professional, structured \
-descriptions in Polish medical language.
+reports in clinical English.
 
 Rules:
-- Use standard Polish medical terminology for EMG/ENG reports.
+- Use standard English medical terminology for EMG/ENG reports.
 - Structure the report with clear sections: nerve conduction studies, \
 needle EMG findings, and a summary/conclusion.
 - Flag all abnormal findings and correlate them with the clinical indication.
 - Be precise with values and units.
 - End with a clinical interpretation suggesting possible diagnoses or \
 confirming/ruling out the clinical indication.
-- Use a professional, concise clinical tone — no filler text.
+- Use a professional, concise clinical tone with no filler text.
 - Format the report with clear headings using markdown.
 """
 
@@ -105,7 +105,7 @@ async def generate_description(exam_data: dict) -> str:
 
     user_prompt = (
         "Based on the following EMG/ENG examination data, generate a complete "
-        "examination description report in Polish. Include all measured values, "
+        "examination report in English. Include all measured values, "
         "flag abnormalities, and provide a clinical interpretation.\n\n"
         f"{study_summary}"
     )

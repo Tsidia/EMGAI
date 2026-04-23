@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EMG/ENG AI — System Opisu Badań</title>
+    <title>EMG/ENG AI: Examination Report System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/style.css">
     <script>
@@ -30,11 +30,11 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold text-gray-900">EMG/ENG AI</h1>
-                    <p class="text-sm text-gray-500">System wspomagania opisu badań</p>
+                    <p class="text-sm text-gray-500">Examination reporting assistant</p>
                 </div>
             </div>
             <button onclick="showView('list')" class="text-sm text-medical-600 hover:text-medical-700 font-medium">
-                Lista badań
+                Examinations
             </button>
         </div>
     </header>
@@ -43,13 +43,13 @@
         <!-- List view -->
         <div id="view-list">
             <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-semibold text-gray-800">Badania</h2>
+                <h2 class="text-lg font-semibold text-gray-800">Examinations</h2>
                 <button onclick="showView('form')" class="bg-medical-600 text-white px-4 py-2 rounded-lg hover:bg-medical-700 transition text-sm font-medium">
-                    + Nowe badanie
+                    + New examination
                 </button>
             </div>
             <div id="exam-list" class="space-y-3">
-                <p class="text-gray-400 text-center py-12">Ładowanie...</p>
+                <p class="text-gray-400 text-center py-12">Loading...</p>
             </div>
         </div>
 
@@ -59,65 +59,65 @@
                 <button onclick="showView('list')" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
-                <h2 class="text-lg font-semibold text-gray-800">Nowe badanie EMG/ENG</h2>
+                <h2 class="text-lg font-semibold text-gray-800">New EMG/ENG examination</h2>
             </div>
             <form id="exam-form" onsubmit="submitExam(event)" class="space-y-6">
                 <!-- Patient info -->
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 class="font-semibold text-gray-700 mb-4">Dane pacjenta</h3>
+                    <h3 class="font-semibold text-gray-700 mb-4">Patient data</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Wiek</label>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Age</label>
                             <input type="number" name="patient_age" min="0" max="120" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-medical-500 focus:border-medical-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Płeć</label>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Sex</label>
                             <select name="patient_sex" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-medical-500">
-                                <option value="M">Mężczyzna</option>
-                                <option value="F">Kobieta</option>
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Wzrost (cm)</label>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Height (cm)</label>
                             <input type="number" name="patient_height_cm" min="50" max="250" step="0.1" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-medical-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-600 mb-1">Lekarz kierujący</label>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">Referring physician</label>
                             <input type="text" name="referring_physician" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-medical-500">
                         </div>
                     </div>
                     <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-600 mb-1">Wskazanie kliniczne</label>
-                        <textarea name="clinical_indication" required rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-medical-500" placeholder="np. Podejrzenie zespołu cieśni nadgarstka..."></textarea>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Clinical indication</label>
+                        <textarea name="clinical_indication" required rows="2" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-medical-500" placeholder="e.g. Suspected right carpal tunnel syndrome..."></textarea>
                     </div>
                 </div>
 
                 <!-- Nerve Conduction Studies -->
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-semibold text-gray-700">Badanie przewodzenia nerwowego (NCS)</h3>
-                        <button type="button" onclick="addNerveStudy()" class="text-sm text-medical-600 hover:text-medical-700 font-medium">+ Dodaj nerw</button>
+                        <h3 class="font-semibold text-gray-700">Nerve conduction studies (NCS)</h3>
+                        <button type="button" onclick="addNerveStudy()" class="text-sm text-medical-600 hover:text-medical-700 font-medium">+ Add nerve</button>
                     </div>
                     <div id="nerve-studies" class="space-y-4"></div>
-                    <p id="no-ncs" class="text-gray-400 text-sm text-center py-4">Brak badań NCS — kliknij „Dodaj nerw"</p>
+                    <p id="no-ncs" class="text-gray-400 text-sm text-center py-4">No NCS entries. Click "Add nerve" to begin.</p>
                 </div>
 
                 <!-- Needle EMG -->
                 <div class="bg-white rounded-xl border border-gray-200 p-6">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-semibold text-gray-700">EMG igłowe</h3>
-                        <button type="button" onclick="addNeedleEMG()" class="text-sm text-medical-600 hover:text-medical-700 font-medium">+ Dodaj mięsień</button>
+                        <h3 class="font-semibold text-gray-700">Needle EMG</h3>
+                        <button type="button" onclick="addNeedleEMG()" class="text-sm text-medical-600 hover:text-medical-700 font-medium">+ Add muscle</button>
                     </div>
                     <div id="needle-emg-studies" class="space-y-4"></div>
-                    <p id="no-emg" class="text-gray-400 text-sm text-center py-4">Brak badań EMG igłowego — kliknij „Dodaj mięsień"</p>
+                    <p id="no-emg" class="text-gray-400 text-sm text-center py-4">No needle EMG entries. Click "Add muscle" to begin.</p>
                 </div>
 
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="loadDemoData()" class="border border-gray-300 text-gray-600 px-5 py-2.5 rounded-lg hover:bg-gray-100 transition text-sm font-medium">
-                        Załaduj dane demo
+                        Load demo data
                     </button>
                     <button type="submit" class="bg-medical-600 text-white px-6 py-2.5 rounded-lg hover:bg-medical-700 transition text-sm font-medium">
-                        Zapisz badanie
+                        Save examination
                     </button>
                 </div>
             </form>
@@ -129,7 +129,7 @@
                 <button onclick="showView('list')" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                 </button>
-                <h2 class="text-lg font-semibold text-gray-800">Szczegóły badania</h2>
+                <h2 class="text-lg font-semibold text-gray-800">Examination details</h2>
                 <span id="detail-status" class="ml-auto"></span>
             </div>
 
@@ -142,11 +142,11 @@
             <!-- Report section -->
             <div class="bg-white rounded-xl border border-gray-200 p-6">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-semibold text-gray-700">Opis badania</h3>
+                    <h3 class="font-semibold text-gray-700">Examination report</h3>
                     <div id="report-actions" class="flex gap-2"></div>
                 </div>
                 <div id="report-content">
-                    <p class="text-gray-400 text-center py-8">Kliknij „Generuj opis AI" aby wygenerować opis badania</p>
+                    <p class="text-gray-400 text-center py-8">Click "Generate AI report" to produce the examination report</p>
                 </div>
             </div>
         </div>

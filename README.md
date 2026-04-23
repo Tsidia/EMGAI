@@ -1,88 +1,88 @@
-# EMG/ENG AI — Inteligentny System Opisu Badań Elektrofizjologicznych
+# EMG/ENG AI: AI-Assisted Electrophysiology Report System
 
-System wspomagający lekarzy neurofizjologów w tworzeniu opisów badań EMG/ENG. Wprowadzasz wyniki badania, system automatycznie porównuje je z normami i generuje gotowy opis kliniczny do przejrzenia, edycji i zatwierdzenia.
+A tool that helps neurophysiologists write EMG/ENG examination reports. You enter study results, the system automatically compares them against reference norms and generates a full clinical report for review, editing and sign-off.
 
-> **Cel:** Przyspieszenie tworzenia opisów badań i standaryzacja ich jakości.
+> **Goal:** speed up report writing and standardise its quality.
 
-## Jak to działa
+## How it works
 
 ```
-Wprowadzenie danych → Walidacja z normami → Generowanie opisu AI → Edycja przez lekarza → Zatwierdzenie
+Enter data -> Validate against norms -> AI generates report -> Physician edits -> Sign off
 ```
 
-### 1. Wprowadzanie wyników badania
+### 1. Entering study results
 
-Formularz obejmuje pełne badanie elektrofizjologiczne:
+The form covers a full electrophysiology study:
 
-- **Przewodzenie nerwowe (NCS)** — nerwy motoryczne i sensoryczne kończyn górnych i dolnych (n. pośrodkowy, łokciowy, promieniowy, strzałkowy, piszczelowy, łydkowy). Parametry: latencja dystalna, amplituda, szybkość przewodzenia, fala F.
-- **EMG igłowe** — 17 mięśni z pełnym zestawem parametrów: aktywność wkłucia, fibrylacje, PSW, fascykulacje, potencjały jednostki ruchowej (czas trwania, amplituda, polifazja), rekrutacja.
-- **Dane pacjenta** — wiek, płeć, wzrost, wskazanie kliniczne, lekarz kierujący.
+- **Nerve conduction studies (NCS):** motor and sensory nerves of the upper and lower limbs (median, ulnar, radial, peroneal, tibial, sural). Parameters: distal latency, amplitude, conduction velocity, F-wave.
+- **Needle EMG:** 17 muscles with a full parameter set: insertional activity, fibrillations, positive sharp waves, fasciculations, motor unit potentials (duration, amplitude, polyphasia), recruitment.
+- **Patient data:** age, sex, height, clinical indication, referring physician.
+
 <img width="959" height="432" alt="mainPage" src="https://github.com/user-attachments/assets/9668ead8-1ba9-40e4-a6fa-ae6196d686de" />
 
-### 2. Automatyczna walidacja z normami
+### 2. Automatic validation against norms
 
-System porównuje każdy zmierzony parametr z opublikowanymi wartościami referencyjnymi (wg Preston & Shapiro, Kimura) i **natychmiast oznacza odchylenia** — widoczne jako czerwone flagi przy każdym badanym nerwie i mięśniu.
+Every measured parameter is compared against published reference values (Preston & Shapiro, Kimura) and **abnormalities are flagged immediately**, shown as red markers next to each nerve and muscle.
 
 <img width="947" height="439" alt="pre-opis" src="https://github.com/user-attachments/assets/bacfd6ef-eb87-4758-b837-0b0928c7cead" />
 
-### 3. Generowanie opisu przez AI
+### 3. AI report generation
 
-Jednym kliknięciem system wysyła dane badania — wraz z oznaczonymi nieprawidłowościami — do modelu AI, który generuje **kompletny opis badania**, w formacie klinicznym:
+A single click sends the study data, with flagged abnormalities, to an LLM that produces a **complete clinical report** in standard format:
 
-- Wyniki badania przewodzenia nerwowego
-- Wyniki EMG igłowego
-- Podsumowanie i interpretacja kliniczna
-- Sugestia diagnostyczna w kontekście wskazania
+- Nerve conduction study findings
+- Needle EMG findings
+- Summary and clinical interpretation
+- Diagnostic suggestion in the context of the clinical indication
 
 <img width="952" height="430" alt="opis3" src="https://github.com/user-attachments/assets/6bc67da7-50a8-4d78-bdd2-58bd9d6ffa5b" />
 
+### 4. Review, edit, sign off
 
-### 4. Przegląd, edycja i zatwierdzenie
-
-Lekarz może:
-- Przejrzeć wygenerowany opis
-- Dowolnie go edytować
-- Zatwierdzić raport swoim nazwiskiem (z datą i godziną)
-- W razie potrzeby — wygenerować opis ponownie
+The physician can:
+- Review the generated report
+- Freely edit it
+- Approve it with their name (timestamped)
+- Regenerate if needed
 
 <img width="946" height="422" alt="opis1" src="https://github.com/user-attachments/assets/d1d931d9-640a-4d22-b506-a74c9a5f126c" />
 
-## Normy referencyjne
+## Reference norms
 
-Zaimplementowane wartości referencyjne dla badania przewodzenia nerwowego:
+Reference values implemented for nerve conduction studies:
 
-| Nerw | Typ | Latencja dyst. | Amplituda | CV |
+| Nerve | Type | Distal lat. | Amplitude | CV |
 |------|-----|---------------|-----------|-----|
-| N. pośrodkowy | motoryczny | ≤4.2 ms | ≥4.0 mV | ≥49 m/s |
-| N. pośrodkowy | sensoryczny | ≤3.5 ms | ≥20 µV | ≥50 m/s |
-| N. łokciowy | motoryczny | ≤3.5 ms | ≥6.0 mV | ≥49 m/s |
-| N. łokciowy | sensoryczny | ≤3.1 ms | ≥17 µV | ≥50 m/s |
-| N. strzałkowy | motoryczny | ≤6.1 ms | ≥2.0 mV | ≥41 m/s |
-| N. piszczelowy | motoryczny | ≤5.8 ms | ≥4.0 mV | ≥41 m/s |
-| N. łydkowy | sensoryczny | ≤4.4 ms | ≥6.0 µV | ≥40 m/s |
+| Median | motor | <=4.2 ms | >=4.0 mV | >=49 m/s |
+| Median | sensory | <=3.5 ms | >=20 uV | >=50 m/s |
+| Ulnar | motor | <=3.5 ms | >=6.0 mV | >=49 m/s |
+| Ulnar | sensory | <=3.1 ms | >=17 uV | >=50 m/s |
+| Peroneal | motor | <=6.1 ms | >=2.0 mV | >=41 m/s |
+| Tibial | motor | <=5.8 ms | >=4.0 mV | >=41 m/s |
+| Sural | sensory | <=4.4 ms | >=6.0 uV | >=40 m/s |
 
-Wartości wg Preston & Shapiro, Kimura — standardowe normy dla dorosłych.
+Values per Preston & Shapiro, Kimura: standard adult norms.
 
-## Architektura
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│                   Przeglądarka                  │
-│         (formularz, podgląd, edycja)            │
-└──────────────────────┬──────────────────────────┘
-                       │ HTTP / JSON
-┌──────────────────────▼───────────────────────────┐
-│              Serwer aplikacji                    │
-│                  (FastAPI)                       │
-│                                                  │
-│  ┌─────────────┐  ┌──────────┐  ┌────────────┐   │
-│  │  Walidacja  │  │ Logika   │  │ Generowanie│   │
-│  │  z normami  │  │ badań    │  │ opisów AI  │   │
-│  └─────────────┘  └──────────┘  └─────┬──────┘   │
-└──────────────────────┬────────────────┬──────────┘
-                       │                │
-              ┌────────▼───────┐  ┌─────▼──────┐
-              │   Baza danych  │  │   API AI   │
-              │   (SQLite)     │  │  (GLM/GPT) │
-              └────────────────┘  └────────────┘
++-------------------------------------------------+
+|                   Browser                       |
+|           (form, preview, editor)               |
++----------------------+--------------------------+
+                       | HTTP / JSON
++----------------------v---------------------------+
+|              Application server                  |
+|                  (FastAPI)                       |
+|                                                  |
+|  +-------------+  +----------+  +------------+   |
+|  |  Norm       |  | Exam     |  | AI report  |   |
+|  |  validation |  | logic    |  | generation |   |
+|  +-------------+  +----------+  +-----+------+   |
++----------------------+----------------+----------+
+                       |                |
+              +--------v-------+  +-----v------+
+              |   Database     |  |   AI API   |
+              |   (SQLite)     |  |  (GLM/GPT) |
+              +----------------+  +------------+
 ```
