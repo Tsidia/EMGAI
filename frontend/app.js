@@ -1,4 +1,28 @@
 // EMG/ENG AI: Frontend Application
+
+// Safe HTML rendering: `html` is a tagged template that HTML-escapes every
+// interpolation by default. Use `raw(s)` to opt in to inline HTML for trusted
+// fragments (e.g. pre-rendered with html`...` or markdownToHtml).
+const RAW = Symbol('raw');
+function raw(s) { return { [RAW]: true, value: s == null ? '' : String(s) }; }
+function escapeHtml(s) {
+    if (s === null || s === undefined) return '';
+    const div = document.createElement('div');
+    div.textContent = String(s);
+    return div.innerHTML;
+}
+function html(strings, ...values) {
+    let out = '';
+    strings.forEach((s, i) => {
+        out += s;
+        if (i < values.length) {
+            const v = values[i];
+            out += (v && typeof v === 'object' && v[RAW]) ? v.value : escapeHtml(v);
+        }
+    });
+    return out;
+}
+
 const API = '';
 let currentExamId = null;
 let formOptions = { nerves: { motor: [], sensory: [] }, muscles: [] };
@@ -31,15 +55,15 @@ async function loadExamList() {
         return;
     }
 
-    container.innerHTML = exams.map(e => `
-        <div onclick="openExam('${e.id}')" class="bg-white rounded-xl border border-gray-200 p-4 hover:border-medical-500 hover:shadow-sm transition cursor-pointer">
+    container.innerHTML = exams.map(e => html`
+        <div data-exam-id="${e.id}" class="bg-white rounded-xl border border-gray-200 p-4 hover:border-medical-500 hover:shadow-sm transition cursor-pointer">
             <div class="flex items-center justify-between">
                 <div>
                     <span class="font-medium text-gray-800">Patient: ${e.patient_age} y/o ${e.patient_sex === 'M' ? 'male' : 'female'}</span>
                     <p class="text-sm text-gray-500 mt-0.5">${e.clinical_indication}</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    ${statusBadge(e.report_status)}
+                    ${raw(statusBadge(e.report_status))}
                     <span class="text-xs text-gray-400">${new Date(e.created_at).toLocaleDateString('en-US')}</span>
                 </div>
             </div>
@@ -50,7 +74,7 @@ async function loadExamList() {
 function statusBadge(status) {
     const labels = { draft: 'Draft', generated: 'Generated', approved: 'Approved' };
     const s = status || 'draft';
-    return `<span class="status-badge status-${s}">${labels[s] || s}</span>`;
+    return html`<span class="status-badge status-${s}">${labels[s] || s}</span>`;
 }
 
 // Exam detail
@@ -68,13 +92,20 @@ function renderDetail(exam) {
     const status = exam.report?.status || 'draft';
     document.getElementById('detail-status').innerHTML = statusBadge(status);
 
-    document.getElementById('detail-patient').innerHTML = `
+    const heightFrag = exam.patient_height_cm
+        ? html`<div><span class="text-gray-500">Height:</span> <strong>${exam.patient_height_cm} cm</strong></div>`
+        : '';
+    const referringFrag = exam.referring_physician
+        ? html`<div><span class="text-gray-500">Referring:</span> <strong>${exam.referring_physician}</strong></div>`
+        : '';
+
+    document.getElementById('detail-patient').innerHTML = html`
         <h3 class="font-semibold text-gray-700 mb-3">Patient data</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div><span class="text-gray-500">Age:</span> <strong>${exam.patient_age}</strong></div>
             <div><span class="text-gray-500">Sex:</span> <strong>${exam.patient_sex === 'M' ? 'Male' : 'Female'}</strong></div>
-            ${exam.patient_height_cm ? `<div><span class="text-gray-500">Height:</span> <strong>${exam.patient_height_cm} cm</strong></div>` : ''}
-            ${exam.referring_physician ? `<div><span class="text-gray-500">Referring:</span> <strong>${exam.referring_physician}</strong></div>` : ''}
+            ${raw(heightFrag)}
+            ${raw(referringFrag)}
         </div>
         <div class="mt-3 text-sm"><span class="text-gray-500">Indication:</span> ${exam.clinical_indication}</div>
     `;
@@ -89,16 +120,19 @@ function renderDetail(exam) {
         studiesHtml += '</tr></thead><tbody>';
         for (const s of exam.nerve_studies) {
             const hasFlags = s.flags && s.flags.length > 0;
-            studiesHtml += `<tr class="${hasFlags ? 'bg-red-50' : ''}">`;
-            studiesHtml += `<td class="p-2 font-medium">${formatName(s.nerve)}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.side}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.study_type}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.distal_latency_ms ?? '-'}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.amplitude ?? '-'}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.conduction_velocity_ms ?? '-'}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.f_wave_latency_ms ?? '-'}</td>`;
-            studiesHtml += `<td class="p-2">${hasFlags ? s.flags.map(f => `<div class="flag-abnormal mb-1">${f}</div>`).join('') : '<div class="flag-normal">Normal</div>'}</td>`;
-            studiesHtml += '</tr>';
+            const flagsCell = hasFlags
+                ? s.flags.map(f => html`<div class="flag-abnormal mb-1">${f}</div>`).join('')
+                : '<div class="flag-normal">Normal</div>';
+            studiesHtml += html`<tr class="${hasFlags ? 'bg-red-50' : ''}">
+                <td class="p-2 font-medium">${formatName(s.nerve)}</td>
+                <td class="p-2 text-center">${s.side}</td>
+                <td class="p-2 text-center">${s.study_type}</td>
+                <td class="p-2 text-center">${s.distal_latency_ms ?? '-'}</td>
+                <td class="p-2 text-center">${s.amplitude ?? '-'}</td>
+                <td class="p-2 text-center">${s.conduction_velocity_ms ?? '-'}</td>
+                <td class="p-2 text-center">${s.f_wave_latency_ms ?? '-'}</td>
+                <td class="p-2">${raw(flagsCell)}</td>
+            </tr>`;
         }
         studiesHtml += '</tbody></table></div>';
     }
@@ -112,19 +146,22 @@ function renderDetail(exam) {
         studiesHtml += '</tr></thead><tbody>';
         for (const s of exam.needle_emg_studies) {
             const hasFlags = s.flags && s.flags.length > 0;
-            studiesHtml += `<tr class="${hasFlags ? 'bg-red-50' : ''}">`;
-            studiesHtml += `<td class="p-2 font-medium">${formatName(s.muscle)}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.side}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.insertional_activity}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.fibrillations}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.positive_sharp_waves}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.fasciculations ? 'yes' : 'no'}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.mup_duration}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.mup_amplitude}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.mup_polyphasia}</td>`;
-            studiesHtml += `<td class="p-2 text-center">${s.recruitment}</td>`;
-            studiesHtml += `<td class="p-2">${hasFlags ? s.flags.map(f => `<div class="flag-abnormal mb-1">${f}</div>`).join('') : '<div class="flag-normal">Normal</div>'}</td>`;
-            studiesHtml += '</tr>';
+            const flagsCell = hasFlags
+                ? s.flags.map(f => html`<div class="flag-abnormal mb-1">${f}</div>`).join('')
+                : '<div class="flag-normal">Normal</div>';
+            studiesHtml += html`<tr class="${hasFlags ? 'bg-red-50' : ''}">
+                <td class="p-2 font-medium">${formatName(s.muscle)}</td>
+                <td class="p-2 text-center">${s.side}</td>
+                <td class="p-2 text-center">${s.insertional_activity}</td>
+                <td class="p-2 text-center">${s.fibrillations}</td>
+                <td class="p-2 text-center">${s.positive_sharp_waves}</td>
+                <td class="p-2 text-center">${s.fasciculations ? 'yes' : 'no'}</td>
+                <td class="p-2 text-center">${s.mup_duration}</td>
+                <td class="p-2 text-center">${s.mup_amplitude}</td>
+                <td class="p-2 text-center">${s.mup_polyphasia}</td>
+                <td class="p-2 text-center">${s.recruitment}</td>
+                <td class="p-2">${raw(flagsCell)}</td>
+            </tr>`;
         }
         studiesHtml += '</tbody></table></div>';
     }
@@ -149,7 +186,8 @@ function renderReport(report) {
             <button onclick="approveReport()" class="bg-medical-600 text-white px-4 py-2 rounded-lg hover:bg-medical-700 transition text-sm font-medium">Approve</button>
         `;
     } else if (status === 'approved') {
-        actions = `<span class="text-sm text-green-600 font-medium">Approved${report.approved_by ? ` by ${report.approved_by}` : ''}</span>`;
+        const suffix = report.approved_by ? ` by ${report.approved_by}` : '';
+        actions = html`<span class="text-sm text-green-600 font-medium">Approved${suffix}</span>`;
     }
     actionsEl.innerHTML = actions;
 
@@ -157,7 +195,7 @@ function renderReport(report) {
         contentEl.innerHTML = '<p class="text-gray-400 text-center py-8">Click "Generate AI report" to produce the examination report</p>';
     } else {
         const text = report.final_text || report.ai_generated_text || '';
-        contentEl.innerHTML = `<div class="report-text" id="report-display">${markdownToHtml(text)}</div>`;
+        contentEl.innerHTML = html`<div class="report-text" id="report-display">${raw(markdownToHtml(text))}</div>`;
     }
 }
 
@@ -170,8 +208,8 @@ function toggleEdit() {
     if (!isEditing) {
         fetch(`${API}/api/examinations/${currentExamId}`).then(r => r.json()).then(exam => {
             const rawText = exam.report.final_text || exam.report.ai_generated_text || '';
-            contentEl.innerHTML = `
-                <textarea class="report-editor" id="report-editor">${escapeHtml(rawText)}</textarea>
+            contentEl.innerHTML = html`
+                <textarea class="report-editor" id="report-editor">${rawText}</textarea>
                 <div class="flex justify-end mt-3">
                     <button onclick="saveReport()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition text-sm font-medium">Save changes</button>
                 </div>
@@ -247,9 +285,9 @@ async function resetForm() {
 function addNerveStudy() {
     document.getElementById('no-ncs').classList.add('hidden');
     const i = nerveCount++;
-    const motorNerves = formOptions.nerves.motor.map(n => `<option value="${n}">${formatName(n)}</option>`).join('');
+    const motorNerves = formOptions.nerves.motor.map(n => html`<option value="${n}">${formatName(n)}</option>`).join('');
 
-    const html = `
+    const markup = html`
     <div class="border border-gray-200 rounded-lg p-4 relative" id="ncs-${i}">
         <button type="button" onclick="document.getElementById('ncs-${i}').remove()" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg">&times;</button>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
@@ -263,7 +301,7 @@ function addNerveStudy() {
             <div>
                 <label class="block text-gray-500 mb-1">Nerve</label>
                 <select name="ncs_nerve_${i}" id="ncs_nerve_${i}" class="w-full border rounded-lg px-2 py-1.5">
-                    ${motorNerves}
+                    ${raw(motorNerves)}
                 </select>
             </div>
             <div>
@@ -292,28 +330,28 @@ function addNerveStudy() {
             </div>
         </div>
     </div>`;
-    document.getElementById('nerve-studies').insertAdjacentHTML('beforeend', html);
+    document.getElementById('nerve-studies').insertAdjacentHTML('beforeend', markup);
 }
 
 function updateNerveOptions(i) {
     const type = document.querySelector(`[name="ncs_type_${i}"]`).value;
     const nerves = formOptions.nerves[type] || [];
     const sel = document.getElementById(`ncs_nerve_${i}`);
-    sel.innerHTML = nerves.map(n => `<option value="${n}">${formatName(n)}</option>`).join('');
+    sel.innerHTML = nerves.map(n => html`<option value="${n}">${formatName(n)}</option>`).join('');
 }
 
 function addNeedleEMG() {
     document.getElementById('no-emg').classList.add('hidden');
     const i = emgCount++;
-    const muscles = formOptions.muscles.map(m => `<option value="${m}">${formatName(m)}</option>`).join('');
+    const muscles = formOptions.muscles.map(m => html`<option value="${m}">${formatName(m)}</option>`).join('');
 
-    const html = `
+    const markup = html`
     <div class="border border-gray-200 rounded-lg p-4 relative" id="emg-${i}">
         <button type="button" onclick="document.getElementById('emg-${i}').remove()" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-lg">&times;</button>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
             <div>
                 <label class="block text-gray-500 mb-1">Muscle</label>
-                <select name="emg_muscle_${i}" class="w-full border rounded-lg px-2 py-1.5">${muscles}</select>
+                <select name="emg_muscle_${i}" class="w-full border rounded-lg px-2 py-1.5">${raw(muscles)}</select>
             </div>
             <div>
                 <label class="block text-gray-500 mb-1">Side</label>
@@ -374,7 +412,7 @@ function addNeedleEMG() {
             </div>
         </div>
     </div>`;
-    document.getElementById('needle-emg-studies').insertAdjacentHTML('beforeend', html);
+    document.getElementById('needle-emg-studies').insertAdjacentHTML('beforeend', markup);
 }
 
 async function submitExam(e) {
@@ -521,14 +559,11 @@ function formatName(s) {
     return s.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
-function escapeHtml(s) {
-    const div = document.createElement('div');
-    div.textContent = s;
-    return div.innerHTML;
-}
-
+// Markdown subset rendering. Input is HTML-escaped first, so any `<script>` or
+// other HTML in the source becomes inert text before the markdown regexes
+// reintroduce a controlled set of tags.
 function markdownToHtml(md) {
-    return md
+    return escapeHtml(md)
         .replace(/^### (.+)$/gm, '<h3>$1</h3>')
         .replace(/^## (.+)$/gm, '<h2>$1</h2>')
         .replace(/^# (.+)$/gm, '<h2>$1</h2>')
@@ -543,4 +578,10 @@ function markdownToHtml(md) {
 }
 
 // Init
+
+document.getElementById('exam-list').addEventListener('click', (ev) => {
+    const card = ev.target.closest('[data-exam-id]');
+    if (card) openExam(card.dataset.examId);
+});
+
 showView('list');

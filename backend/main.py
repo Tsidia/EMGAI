@@ -1,7 +1,6 @@
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -17,12 +16,10 @@ app = FastAPI(
     version="1.0.0",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Frontend and API are served from the same FastAPI app (see static mount and
+# `/` handler below), so requests are same-origin and no CORS middleware is
+# needed. If a split deployment is ever introduced, add CORSMiddleware here
+# with an explicit allowlist rather than a wildcard.
 
 # API routes
 app.include_router(examinations.router)

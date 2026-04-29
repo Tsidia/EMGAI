@@ -4,6 +4,8 @@ A tool that helps neurophysiologists write EMG/ENG examination reports. You ente
 
 > **Goal:** speed up report writing and standardise its quality.
 
+> **Disclaimer.** This is a demonstration project, not a medical device. It is not validated for clinical use, has not been reviewed or cleared by any regulator, and must not be used to diagnose, treat, or otherwise inform decisions about real patients. Reference norms are simplified textbook values for illustration only.
+
 ## How it works
 
 ```
